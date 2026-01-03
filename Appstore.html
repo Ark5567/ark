@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ark's Game Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://media.giphy.com/media/26BROrSHlmyzzHf3i/giphy.gif') center/cover;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 25, 0.45);
+            z-index: -1;
+        }
+
+        .cursor {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.08s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 35px;
+            height: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.25s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            animation: trailFade 0.7s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            to {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: left;
+            color: white;
+            margin-bottom: 35px;
+            padding: 30px 35px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        header h1 {
+            font-size: 2.6em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1em;
+            opacity: 0.75;
+            font-weight: 400;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            padding: 5px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: white;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .game-card:hover .game-icon canvas {
+            transform: scale(1.08);
+        }
+
+        .game-icon {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 18px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(80, 100, 180, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+        }
+
+        .gun-icon {
+            width: 70px;
+            height: 70px;
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .gun-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .game-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .game-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(200, 100, 220, 0.75);
+            backdrop-filter: blur(6px);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .available-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(40, 180, 100, 0.8);
+            backdrop-filter: blur(6px);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .game-card.coming-soon {
+            opacity: 0.65;
+            pointer-events: none;
+        }
+
+        .game-card.coming-soon .game-icon {
+            background: rgba(60, 60, 70, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: rgba(40, 40, 50, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 12% auto;
+            padding: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 12px;
+            font-size: 1.6em;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .modal-content p {
+            margin-bottom: 22px;
+            opacity: 0.8;
+            font-size: 0.95em;
+        }
+
+        #passcodeInput {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.4em;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            margin-bottom: 18px;
+            letter-spacing: 10px;
+            font-family: monospace;
+        }
+
+        #passcodeInput::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 6px;
+        }
+
+        #passcodeInput:focus {
+            outline: none;
+            border-color: rgba(100, 180, 255, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            background: rgba(40, 180, 100, 0.9);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: rgba(40, 180, 100, 1);
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn {
+            background: rgba(180, 50, 50, 0.8);
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(180, 50, 50, 1);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ff8080;
+            margin-top: 8px;
+            font-size: 0.85em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Passcode Modal -->
+    <div id="passcodeModal" class="modal">
+        <div class="modal-content">
+            <h2>🔒 Beta Access</h2>
+            <p>Enter the 4-digit code</p>
+            <input type="text" id="passcodeInput" maxlength="4" placeholder="----">
+            <div class="error-message" id="errorMessage">Wrong code, try again</div>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn submit-btn" onclick="checkPasscode()">Enter</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Ark's Game Store</h1>
+            <p>my collection of games</p>
+        </header>
+
+        <div class="games-grid" id="gamesGrid">
+            <!-- Available game -->
+            <a href="#" class="game-card" onclick="event.preventDefault(); event.stopPropagation(); openPasscodeModal(); return false;">
+                <span class="available-badge">Beta</span>
+                <div class="game-icon">
+                    <svg class="gun-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Gun body -->
+                        <rect x="20" y="35" width="50" height="15" rx="2" fill="#e0e0e0"/>
+                        <!-- Barrel -->
+                        <rect x="70" y="38" width="25" height="9" rx="1" fill="#d0d0d0"/>
+                        <rect x="93" y="39" width="5" height="7" rx="1" fill="#a0a0a0"/>
+                        <!-- Handle -->
+                        <rect x="18" y="50" width="12" height="30" rx="2" fill="#b0b0b0"/>
+                        <path d="M 18 50 Q 15 60 18 70" stroke="#909090" stroke-width="2" fill="none"/>
+                        <!-- Trigger -->
+                        <rect x="28" y="48" width="5" height="8" rx="1" fill="#808080"/>
+                        <!-- Magazine -->
+                        <rect x="25" y="75" width="10" height="18" rx="1" fill="#707070"/>
+                        <!-- Sights -->
+                        <rect x="65" y="32" width="3" height="6" fill="#ff6600"/>
+                        <rect x="25" y="32" width="3" height="6" fill="#ff6600"/>
+                        <!-- Details -->
+                        <line x1="35" y1="38" x2="65" y2="38" stroke="#999" stroke-width="1"/>
+                        <line x1="35" y1="47" x2="65" y2="47" stroke="#999" stroke-width="1"/>
+                        <circle cx="40" cy="42" r="2" fill="#666"/>
+                    </svg>
+                </div>
+                <div class="game-title">Shooter 3D</div>
+                <div class="game-description">wave-based 3D shooter [beta]</div>
+            </a>
+
+            <!-- Coming soon games -->
+            <div class="game-card coming-soon">
+                <span class="coming-soon-badge">Soon</span>
+                <div class="game-icon">❓</div>
+                <div class="game-title">???</div>
+                <div class="game-description">coming soon...</div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <span class="coming-soon-badge">Soon</span>
+                <div class="game-icon">❓</div>
+                <div class="game-title">???</div>
+                <div class="game-description">coming soon...</div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <span class="coming-soon-badge">Soon</span>
+                <div class="game-icon">❓</div>
+                <div class="game-title">???</div>
+                <div class="game-description">coming soon...</div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <span class="coming-soon-badge">Soon</span>
+                <div class="game-icon">❓</div>
+                <div class="game-title">???</div>
+                <div class="game-description">coming soon...</div>
+            </div>
+
+            <div class="game-card coming-soon">
+                <span class="coming-soon-badge">Soon</span>
+                <div class="game-icon">❓</div>
+                <div class="game-title">???</div>
+                <div class="game-description">coming soon...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GAME_URL = 'https://ark5567.github.io/ark/3DSHOOTERV5.html';
+        const CORRECT_PASSCODE = '1212';
+
+        // Modal functions
+        function openPasscodeModal() {
+            document.getElementById('passcodeModal').style.display = 'block';
+            document.getElementById('passcodeInput').focus();
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('passcodeInput').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('passcodeModal').style.display = 'none';
+            document.getElementById('passcodeInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function checkPasscode() {
+            const input = document.getElementById('passcodeInput').value;
+            if (input === CORRECT_PASSCODE) {
+                window.location.href = GAME_URL;
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('passcodeInput').value = '';
+                document.getElementById('passcodeInput').focus();
+            }
+        }
+
+        document.getElementById('passcodeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPasscode();
+        });
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('passcodeModal')) {
+                closeModal();
+            }
+        }
+
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        let mouseX = 0, mouseY = 0;
+        let followerX = 0, followerY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+            createTrail(mouseX, mouseY);
+        });
+
+        function animateFollower() {
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+            follower.style.left = followerX + 'px';
+            follower.style.top = followerY + 'px';
+            requestAnimationFrame(animateFollower);
+        }
+        animateFollower();
+
+        let lastTrailTime = 0;
+        function createTrail(x, y) {
+            const now = Date.now();
+            if (now - lastTrailTime < 35) return;
+            lastTrailTime = now;
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            document.body.appendChild(trail);
+            setTimeout(() => trail.remove(), 700);
+        }
+
+        const gameCards = document.querySelectorAll('.game-card:not(.coming-soon)');
+        gameCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(1.4)';
+                follower.style.transform = 'scale(1.4)';
+            });
+            card.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                follower.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
