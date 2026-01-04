@@ -1,0 +1,451 @@
+/**
+ * @name Refined Dark - Flashy Edition
+ * @description A polished dark theme with eye-catching animations
+ * @author Ark
+ * @version 3.0
+ */
+
+/* Smooth but faster transitions */
+* {
+    transition: all 0.15s ease;
+}
+
+/* Root color variables - refined dark palette */
+:root {
+    --background-primary: #16181d;
+    --background-secondary: #1e2128;
+    --background-secondary-alt: #151820;
+    --background-tertiary: #0f1116;
+    --background-accent: #2a2d36;
+    --background-floating: #1a1d24;
+    --background-mobile-primary: #16181d;
+    --background-mobile-secondary: #1e2128;
+    --background-modifier-hover: rgba(79, 84, 92, 0.16);
+    --background-modifier-active: rgba(79, 84, 92, 0.24);
+    --background-modifier-selected: rgba(79, 84, 92, 0.32);
+    --background-modifier-accent: rgba(79, 84, 92, 0.48);
+    --channeltextarea-background: #1e2128;
+    --deprecated-card-bg: #1a1d24;
+    --deprecated-card-editable-bg: #1e2128;
+    --deprecated-store-bg: #16181d;
+    --text-normal: #dcddde;
+    --text-muted: #72767d;
+    --text-link: #7289da;
+    --interactive-normal: #b9bbbe;
+    --interactive-hover: #dcddde;
+    --interactive-active: #ffffff;
+    --interactive-muted: #4f545c;
+    --header-primary: #ffffff;
+    --header-secondary: #b9bbbe;
+    --scrollbar-thin-thumb: #202225;
+    --scrollbar-thin-track: transparent;
+    --scrollbar-auto-thumb: #202225;
+    --scrollbar-auto-track: #2e3338;
+}
+
+/* Keyframe animations */
+@keyframes glow-pulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 4px #7289da) brightness(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 12px #7289da) brightness(1.2);
+    }
+}
+
+@keyframes glow-pulse-green {
+    0%, 100% { filter: drop-shadow(0 0 6px #43b581) brightness(1.2); }
+    50% { filter: drop-shadow(0 0 15px #43b581) brightness(1.4); }
+}
+
+@keyframes glow-pulse-yellow {
+    0%, 100% { filter: drop-shadow(0 0 6px #faa61a) brightness(1.2); }
+    50% { filter: drop-shadow(0 0 15px #faa61a) brightness(1.4); }
+}
+
+@keyframes glow-pulse-red {
+    0%, 100% { filter: drop-shadow(0 0 6px #f04747) brightness(1.2); }
+    50% { filter: drop-shadow(0 0 15px #f04747) brightness(1.4); }
+}
+
+@keyframes glow-pulse-gray {
+    0%, 100% { filter: drop-shadow(0 0 6px #99aab5) brightness(1.2); }
+    50% { filter: drop-shadow(0 0 15px #99aab5) brightness(1.4); }
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1.08); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-3px) rotate(-5deg); }
+    75% { transform: translateX(3px) rotate(5deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes spin-glow {
+    0% { 
+        transform: rotate(0deg) scale(1);
+        filter: drop-shadow(0 0 3px #7289da);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.08);
+        filter: drop-shadow(0 0 10px #7289da);
+    }
+    100% { 
+        transform: rotate(360deg) scale(1);
+        filter: drop-shadow(0 0 3px #7289da);
+    }
+}
+
+@keyframes slide-glow {
+    0% { 
+        transform: translateX(0);
+        box-shadow: -3px 0 8px #7289da00;
+    }
+    100% { 
+        transform: translateX(5px);
+        box-shadow: -3px 0 8px #7289da;
+    }
+}
+
+/* Server list container - better spacing */
+[class*="guilds"] {
+    background-color: var(--background-tertiary);
+    padding: 8px 0;
+}
+
+/* Server icons - flashy bounce with glow pulse */
+[class*="listItem"] {
+    margin-bottom: 8px;
+}
+
+[class*="listItem"] [class*="wrapper"] {
+    transition: transform 0.15s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                filter 0.3s ease;
+    overflow: hidden;
+}
+
+[class*="listItem"] [class*="wrapper"]:hover {
+    animation: bounce-in 0.4s ease, glow-pulse 1.5s ease-in-out infinite;
+    transform: scale(1.08);
+}
+
+/* Server icon pills - smooth expand */
+[class*="listItem"] [class*="pill"] span {
+    transition: height 0.18s ease, border-radius 0.18s ease;
+}
+
+/* Sidebar - refined look */
+[class*="sidebar"] {
+    background-color: var(--background-secondary);
+}
+
+/* Channel categories - better contrast */
+[class*="containerDefault"] h3 {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Channel list items - glowing slide */
+[class*="containerDefault"] {
+    margin: 1px 8px;
+    border-radius: 4px;
+    transition: transform 0.2s ease, 
+                background-color 0.2s ease,
+                box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+[class*="containerDefault"]:hover {
+    animation: slide-glow 0.3s ease forwards;
+    background-color: #7289da15;
+}
+
+/* Active channel */
+[class*="containerDefault"][class*="selected"] {
+    background-color: #7289da25;
+    box-shadow: -3px 0 0 #7289da inset;
+}
+
+/* Chat area - cleaner look */
+[class*="chatContent"] {
+    background-color: var(--background-primary);
+}
+
+/* Message input - refined */
+[class*="channelTextArea"] {
+    background-color: var(--background-accent);
+    border-radius: 8px;
+    margin: 0 16px 24px;
+    transition: box-shadow 0.2s ease;
+}
+
+[class*="channelTextArea"]:focus-within {
+    box-shadow: 0 0 15px #7289da;
+}
+
+[class*="channelTextArea"] [class*="scrollableContainer"] {
+    background-color: transparent;
+}
+
+/* Buttons - blue shimmer on hover */
+[class*="button"] {
+    border-radius: 4px;
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                box-shadow 0.2s ease,
+                filter 0.2s ease;
+    overflow: hidden;
+}
+
+[class*="button"]:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 5px 20px #7289da;
+    filter: brightness(1.2);
+}
+
+/* User panel - polished */
+[class*="panels"] {
+    background-color: var(--background-secondary-alt);
+}
+
+[class*="panels"] [class*="container"] {
+    background-color: transparent;
+}
+
+/* User panel icons - spin and glow */
+[class*="panels"] [class*="iconWrapper"],
+[class*="panels"] button {
+    transition: all 0.2s ease;
+}
+
+[class*="panels"] [class*="iconWrapper"]:hover,
+[class*="panels"] button:hover {
+    animation: spin-glow 0.6s ease-in-out;
+}
+
+/* Mute icon - red glow */
+[class*="panels"] [aria-label*="Mute" i]:hover,
+[class*="panels"] [aria-label*="Unmute" i]:hover {
+    animation: none !important;
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 0 12px #f04747) brightness(1.2);
+}
+
+/* Deafen icon - red glow */
+[class*="panels"] [aria-label*="Deafen" i]:hover,
+[class*="panels"] [aria-label*="Undeafen" i]:hover {
+    animation: none !important;
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 0 12px #f04747) brightness(1.2);
+}
+
+/* Settings icon - gray glow */
+[class*="panels"] [aria-label*="User Settings" i]:hover,
+[class*="panels"] [aria-label*="Settings" i]:hover {
+    animation: none !important;
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 0 12px #99aab5) brightness(1.2);
+}
+
+/* Toolbar icons - shake effect */
+[class*="toolbar"] [class*="iconWrapper"],
+[class*="toolbar"] [class*="icon"] {
+    transition: transform 0.1s ease;
+    overflow: hidden;
+}
+
+[class*="toolbar"] [class*="iconWrapper"]:hover,
+[class*="toolbar"] [class*="icon"]:hover {
+    animation: shake 0.4s ease;
+    filter: drop-shadow(0 0 8px #7289da);
+}
+
+/* Message hover - glow sweep */
+[class*="message"] {
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[class*="message"]:hover {
+    background-color: #7289da08 !important;
+    box-shadow: -3px 0 0 #7289da50 inset;
+}
+
+/* Member list - refined */
+[class*="members"] {
+    background-color: var(--background-secondary);
+}
+
+[class*="member"] {
+    margin: 1px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+[class*="member"]:hover {
+    animation: slide-glow 0.3s ease forwards;
+    background-color: #7289da10;
+}
+
+/* Scrollbars - sleek with glow */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(32, 34, 37, 0.6);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #7289da;
+    box-shadow: 0 0 10px #7289da;
+}
+
+/* Reactions - blue burst */
+[class*="reaction"] {
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    overflow: hidden;
+}
+
+[class*="reaction"]:hover {
+    transform: scale(1.12) rotate(5deg);
+    filter: drop-shadow(0 0 10px #7289da) brightness(1.2);
+}
+
+/* Emoji picker - float effect */
+[class*="emojiItem"] {
+    transition: transform 0.2s ease;
+    overflow: hidden;
+}
+
+[class*="emojiItem"]:hover {
+    animation: float 0.8s ease-in-out infinite;
+    filter: drop-shadow(0 3px 6px #7289da);
+}
+
+/* User popout - refined */
+[class*="userPopout"] {
+    background-color: var(--background-floating);
+}
+
+/* Modals - better backdrop */
+[class*="backdrop"] {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Profile badges - spin glow */
+[class*="profileBadges"] [class*="badge"] {
+    transition: transform 0.2s ease;
+    overflow: hidden;
+}
+
+[class*="profileBadges"] [class*="badge"]:hover {
+    animation: spin-glow 0.6s ease-in-out;
+}
+
+/* Search results - cleaner */
+[class*="searchResult"] {
+    background-color: var(--background-accent);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+[class*="searchResult"]:hover {
+    background-color: var(--background-modifier-hover);
+    box-shadow: 0 3px 10px #7289da30;
+}
+
+/* Voice panel - refined */
+[class*="container"][class*="voicePanel"] {
+    background-color: var(--background-secondary-alt);
+}
+
+/* Status indicators - pulse glow */
+[class*="status"] {
+    transition: all 0.2s ease;
+}
+
+[class*="status"]:hover {
+    animation: glow-pulse 1s ease-in-out infinite;
+}
+
+/* Online status - green */
+svg[class*="status"] rect[fill*="23a55a"],
+svg[class*="status"] rect[fill*="3ba55c"],
+[class*="mask"][style*="23a55a"],
+[class*="pointerEvents"] rect[mask][fill="#23a55a"] {
+    transition: all 0.2s ease;
+}
+
+svg[class*="status"]:hover rect[fill*="23a55a"],
+svg[class*="status"]:hover rect[fill*="3ba55c"],
+[class*="mask"]:hover[style*="23a55a"],
+[class*="pointerEvents"]:hover rect[mask][fill="#23a55a"] {
+    animation: glow-pulse-green 1s ease-in-out infinite;
+}
+
+/* Idle status - yellow */
+svg[class*="status"] rect[fill*="f0b232"],
+svg[class*="status"] rect[fill*="faa61a"],
+[class*="mask"][style*="f0b232"] {
+    transition: all 0.2s ease;
+}
+
+svg[class*="status"]:hover rect[fill*="f0b232"],
+svg[class*="status"]:hover rect[fill*="faa61a"],
+[class*="mask"]:hover[style*="f0b232"] {
+    animation: glow-pulse-yellow 1s ease-in-out infinite;
+}
+
+/* DND status - red */
+svg[class*="status"] rect[fill*="f23f42"],
+svg[class*="status"] rect[fill*="f04747"],
+[class*="mask"][style*="f23f42"] {
+    transition: all 0.2s ease;
+}
+
+svg[class*="status"]:hover rect[fill*="f23f42"],
+svg[class*="status"]:hover rect[fill*="f04747"],
+[class*="mask"]:hover[style*="f23f42"] {
+    animation: glow-pulse-red 1s ease-in-out infinite;
+}
+
+/* Offline/Invisible status - gray */
+svg[class*="status"] rect[fill*="80848e"],
+svg[class*="status"] rect[fill*="747f8d"],
+[class*="mask"][style*="80848e"] {
+    transition: all 0.2s ease;
+}
+
+svg[class*="status"]:hover rect[fill*="80848e"],
+svg[class*="status"]:hover rect[fill*="747f8d"],
+[class*="mask"]:hover[style*="80848e"] {
+    animation: glow-pulse-gray 1s ease-in-out infinite;
+}
+
+/* Mentions - flash effect */
+[class*="mention"] {
+    transition: all 0.2s ease;
+}
+
+[class*="mention"]:hover {
+    background-color: #7289da30;
+    box-shadow: 0 0 10px #7289da;
+}
