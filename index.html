@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dying Light Bio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            overflow: hidden;
+            position: relative;
+            cursor: none;
+        }
+
+        /* Background image */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -3;
+            filter: brightness(0.3) contrast(1.2);
+        }
+
+        /* Moon in background */
+        .moon {
+            position: fixed;
+            top: 10%;
+            right: 15%;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 255, 200, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -2;
+            box-shadow: 0 0 60px rgba(255, 255, 200, 0.2);
+        }
+
+        /* Zombie silhouettes */
+        .zombies {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+
+        .zombie {
+            position: absolute;
+            bottom: 0;
+            font-size: 80px;
+            filter: blur(3px);
+            animation: zombieSway 4s ease-in-out infinite;
+        }
+
+        @keyframes zombieSway {
+            0%, 100% { transform: translateX(0) rotate(-2deg); }
+            50% { transform: translateX(10px) rotate(2deg); }
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.9) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Film grain */
+        .film-grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=');
+            z-index: 9997;
+            pointer-events: none;
+            opacity: 0.4;
+            animation: grainMove 0.5s steps(2) infinite;
+        }
+
+        @keyframes grainMove {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            30% { transform: translate(3%, -15%); }
+            50% { transform: translate(12%, 9%); }
+            70% { transform: translate(9%, 4%); }
+            90% { transform: translate(-1%, 7%); }
+        }
+
+        /* Chromatic aberration */
+        .chromatic {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9996;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.05;
+        }
+
+        .chromatic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 60%, rgba(255, 0, 0, 0.3) 100%);
+        }
+
+        .chromatic::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 60%, rgba(0, 255, 255, 0.3) 100%);
+            transform: translate(2px, 2px);
+        }
+
+        /* Scanlines effect */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Dust particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 140, 0, 0.3);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Custom cursor - FIXED */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff8c00;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+        }
+
+        .custom-cursor.hover {
+            width: 40px;
+            height: 40px;
+            border-color: #ff6b00;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.8);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 500px;
+            width: 90%;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid rgba(255, 140, 0, 0.4);
+            border-radius: 0;
+            padding: 40px 35px;
+            position: relative;
+            box-shadow: 
+                0 0 40px rgba(255, 140, 0, 0.3),
+                inset 0 0 60px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            animation: flicker 0.1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { border-color: rgba(255, 140, 0, 0.4); }
+            50% { border-color: rgba(255, 140, 0, 0.5); }
+        }
+
+        /* Blood splatters */
+        .blood-splatter {
+            position: absolute;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .blood-1 {
+            top: 10px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.6) 0%, transparent 70%);
+            filter: blur(2px);
+        }
+
+        .blood-2 {
+            bottom: 20px;
+            left: 40px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.6) 0%, transparent 70%);
+            filter: blur(2px);
+        }
+
+        /* Corner accents with rust texture */
+        .container::before,
+        .container::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 3px solid #ff8c00;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+        }
+
+        .container::before {
+            top: -2px;
+            left: -2px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .container::after {
+            bottom: -2px;
+            right: -2px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .corner-tl,
+        .corner-br {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 3px solid #ff8c00;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+        }
+
+        .corner-tl {
+            top: -2px;
+            right: -2px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-br {
+            bottom: -2px;
+            left: -2px;
+            border-right: none;
+            border-top: none;
+        }
+
+        /* Warning stripe */
+        .warning-stripe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: repeating-linear-gradient(
+                45deg,
+                #ff8c00,
+                #ff8c00 10px,
+                #000 10px,
+                #000 20px
+            );
+            opacity: 0.8;
+        }
+
+        /* Barbed wire decoration */
+        .barbed-wire {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(100, 100, 100, 0.3) 10%, 
+                rgba(100, 100, 100, 0.3) 90%, 
+                transparent 100%);
+            opacity: 0.5;
+        }
+
+        /* Time of day indicator */
+        .time-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ff8c00;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Russo One', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+
+        .time-icon {
+            font-size: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Profile section */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .profile-img-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.6));
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border: 3px solid #ff8c00;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* UV light effect */
+        .profile-img::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(100, 150, 255, 0.15) 50%,
+                transparent 70%
+            );
+            animation: uvPulse 4s infinite;
+            z-index: 1;
+        }
+
+        @keyframes uvPulse {
+            0%, 100% { 
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+                opacity: 0;
+            }
+            50% { 
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+                opacity: 1;
+            }
+        }
+
+        .status-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            background: #ff8c00;
+            border-radius: 50%;
+            border: 2px solid #0a0a0a;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 1);
+            animation: pulse 2s infinite;
+            z-index: 2;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6;
+                transform: scale(0.9);
+            }
+        }
+
+        .username {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 
+                0 0 15px rgba(255, 140, 0, 0.8),
+                0 0 30px rgba(255, 140, 0, 0.4),
+                3px 3px 0 rgba(0, 0, 0, 0.9);
+            margin-bottom: 10px;
+            font-family: 'Russo One', sans-serif;
+            position: relative;
+        }
+
+        /* Distressed text effect */
+        .username::after {
+            content: 'ARK';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            color: rgba(255, 140, 0, 0.3);
+            text-shadow: 2px 2px 0 rgba(255, 140, 0, 0.3);
+            z-index: -1;
+        }
+
+        .username:hover {
+            animation: glitchText 0.3s infinite;
+        }
+
+        @keyframes glitchText {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .tagline {
+            color: #aaa;
+            font-size: 14px;
+            font-style: italic;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            font-family: 'Russo One', sans-serif;
+        }
+
+        /* Infection meter */
+        .infection-meter {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .infection-fill {
+            height: 100%;
+            width: 85%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff8c00);
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            animation: infectionPulse 2s infinite;
+        }
+
+        @keyframes infectionPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .infection-label {
+            position: absolute;
+            top: -18px;
+            left: 0;
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bio-section {
+            margin: 25px 0;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 140, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+            background: rgba(255, 140, 0, 0.05);
+            position: relative;
+        }
+
+        .bio-text {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Skill Tree Section */
+        .skill-tree-header {
+            text-align: center;
+            margin: 30px 0 20px;
+            position: relative;
+        }
+
+        .skill-tree-title {
+            color: #ff8c00;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(255, 140, 0, 0.7);
+            margin-bottom: 10px;
+            font-family: 'Russo One', sans-serif;
+        }
+
+        .skill-tree-subtitle {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .skill-tree {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        /* Connection lines with glow */
+        .skill-tree::before,
+        .skill-tree::after {
+            content: '';
+            position: absolute;
+            height: 2px;
+            width: 80px;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.6), transparent);
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+
+        .skill-tree::before {
+            left: 80px;
+        }
+
+        .skill-tree::after {
+            right: 80px;
+        }
+
+        .skill-node {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .skill-node:hover {
+            animation: screenShake 0.3s infinite;
+        }
+
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, -2px); }
+        }
+
+        .skill-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid rgba(255, 140, 0, 0.4);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .skill-node:hover .skill-icon-wrapper {
+            border-color: #ff8c00;
+            transform: scale(1.15);
+            box-shadow: 
+                0 0 40px rgba(255, 140, 0, 0.7),
+                inset 0 0 30px rgba(255, 140, 0, 0.3);
+        }
+
+        .skill-icon {
+            width: 32px;
+            height: 32px;
+            fill: #ff8c00;
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.7));
+            transition: all 0.3s ease;
+        }
+
+        .skill-node:hover .skill-icon {
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 1));
+        }
+
+        .skill-label {
+            position: absolute;
+            bottom: -25px;
+            color: #888;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+            font-family: 'Russo One', sans-serif;
+        }
+
+        .skill-node:hover .skill-label {
+            color: #ff8c00;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.7);
+        }
+
+        /* Location */
+        .location {
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+            font-family: 'Russo One', sans-serif;
+        }
+
+        .location svg {
+            width: 18px;
+            height: 18px;
+            fill: #ff8c00;
+            filter: drop-shadow(0 0 5px rgba(255, 140, 0, 0.5));
+        }
+
+        /* Audio toggle button */
+        .audio-toggle {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 3px solid rgba(255, 140, 0, 0.4);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            cursor: none;
+        }
+
+        .audio-toggle:hover {
+            border-color: #ff8c00;
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.7);
+            transform: scale(1.15);
+            animation: screenShake 0.2s infinite;
+        }
+
+        .audio-icon {
+            width: 28px;
+            height: 28px;
+            fill: #ff8c00;
+            filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.7));
+        }
+
+        /* Copy notification */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(255, 140, 0, 0.95);
+            color: #000;
+            padding: 12px 25px;
+            border: 3px solid #ff6b00;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
+            font-family: 'Russo One', sans-serif;
+        }
+
+        .copy-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .username {
+                font-size: 28px;
+            }
+
+            .skill-tree {
+                gap: 25px;
+            }
+
+            .skill-tree::before,
+            .skill-tree::after {
+                width: 50px;
+            }
+
+            .skill-tree::before {
+                left: 60px;
+            }
+
+            .skill-tree::after {
+                right: 60px;
+            }
+
+            .skill-node {
+                width: 60px;
+                height: 60px;
+            }
+
+            .skill-icon-wrapper {
+                width: 55px;
+                height: 55px;
+            }
+
+            .skill-icon {
+                width: 26px;
+                height: 26px;
+            }
+
+            .audio-toggle {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .audio-icon {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="moon"></div>
+    <div class="zombies">
+        <div class="zombie" style="left: 10%;">🧟</div>
+        <div class="zombie" style="left: 40%; animation-delay: 1s;">🧟‍♂️</div>
+        <div class="zombie" style="left: 70%; animation-delay: 2s;">🧟‍♀️</div>
+    </div>
+    <div class="vignette"></div>
+    <div class="film-grain"></div>
+    <div class="chromatic"></div>
+    <div class="scanlines"></div>
+    
+    <div class="particles" id="particles"></div>
+
+    <audio id="bgAudio" loop>
+    <source src="audio.mp3" type="audio/mpeg">
+</audio>
+
+    <div class="container">
+        <div class="warning-stripe"></div>
+        <div class="barbed-wire"></div>
+        <div class="corner-tl"></div>
+        <div class="corner-br"></div>
+        <div class="blood-splatter blood-1"></div>
+        <div class="blood-splatter blood-2"></div>
+
+        <div class="time-indicator">
+            <span class="time-icon">🌙</span>
+            <span>21:47 - NIGHT</span>
+        </div>
+
+        <div class="profile-header">
+            <div class="profile-img-container">
+                <div class="profile-img">
+                    <img src="profile.png" alt="Profile">
+                </div>
+                <div class="status-indicator"></div>
+            </div>
+            <h1 class="username">ARK</h1>
+            <p class="tagline">Volatile Hunter</p>
+            <div class="infection-meter">
+                <span class="infection-label">Antizin Level</span>
+                <div class="infection-fill"></div>
+            </div>
+        </div>
+
+        <div class="bio-section">
+            <p class="bio-text">dualbooting my di...</p>
+        </div>
+
+        <div class="skill-tree-header">
+            <div class="skill-tree-title">◆ SURVIVOR SKILLS ◆</div>
+            <div class="skill-tree-subtitle">Connect With The Runner</div>
+        </div>
+
+        <div class="skill-tree">
+            <!-- Steam Icon -->
+            <a href="https://steamcommunity.com/profiles/76561199516152700/" class="skill-node">
+    <div class="skill-icon-wrapper">
+        <svg class="skill-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor">
+            <path d="M18.102 12.129c0-0 0-0 0-0.001 0-1.564 1.268-2.831 2.831-2.831s2.831 1.268 2.831 2.831c0 1.564-1.267 2.831-2.831 2.831-0 0-0 0-0.001 0h0c-0 0-0 0-0.001 0-1.563 0-2.83-1.267-2.83-2.83 0-0 0-0 0-0.001v0zM24.691 12.135c0-2.081-1.687-3.768-3.768-3.768s-3.768 1.687-3.768 3.768c0 2.081 1.687 3.768 3.768 3.768v0c2.080-0.003 3.765-1.688 3.768-3.767v-0zM10.427 23.76l-1.841-0.762c0.524 1.078 1.611 1.808 2.868 1.808 1.317 0 2.448-0.801 2.93-1.943l0.008-0.021c0.155-0.362 0.246-0.784 0.246-1.226 0-1.757-1.424-3.181-3.181-3.181-0.405 0-0.792 0.076-1.148 0.213l0.022-0.007 1.903 0.787c0.852 0.364 1.439 1.196 1.439 2.164 0 1.296-1.051 2.347-2.347 2.347-0.324 0-0.632-0.066-0.913-0.184l0.015 0.006zM15.974 1.004c-7.857 0.001-14.301 6.046-14.938 13.738l-0.004 0.054 8.038 3.322c0.668-0.462 1.495-0.737 2.387-0.737 0.001 0 0.002 0 0.002 0h-0c0.079 0 0.156 0.005 0.235 0.008l3.575-5.176v-0.074c0.003-3.12 2.533-5.648 5.653-5.648 3.122 0 5.653 2.531 5.653 5.653s-2.531 5.653-5.653 5.653h-0.131l-5.094 3.638c0 0.065 0.005 0.131 0.005 0.199 0 0.001 0 0.002 0 0.003 0 2.342-1.899 4.241-4.241 4.241-2.047 0-3.756-1.451-4.153-3.38l-0.005-0.027-5.755-2.383c1.841 6.345 7.601 10.905 14.425 10.905 8.281 0 14.994-6.713 14.994-14.994s-6.713-14.994-14.994-14.994c-0 0-0.001 0-0.001 0h0z"></path>
+        </svg>
+    </div>
+    <span class="skill-label">Steam</span>
+</a>
+
+            <!-- Discord Icon -->
+            <a href="#" class="skill-node" onclick="copyText('@ark.no1', event)">
+                <div class="skill-icon-wrapper">
+                    <svg class="skill-icon" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                </div>
+                <span class="skill-label">Discord</span>
+            </a>
+
+            <!-- Email Icon -->
+            <a href="#" class="skill-node" onclick="copyText('arsdy5567@gmail.com', event)">
+                <div class="skill-icon-wrapper">
+                    <svg class="skill-icon" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </div>
+                <span class="skill-label">Email</span>
+            </a>
+        </div>
+
+        <div class="location">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            <span>LEBANON - SECTOR 0</span>
+        </div>
+    </div>
+
+    <button class="audio-toggle" id="audioToggle">
+        <svg class="audio-icon" id="audioIcon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+    </button>
+
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="copy-notification" id="notification">COPIED TO INVENTORY</div>
+
+    <script>
+        
+
+        // Custom Cursor - FIXED
+        const cursor = document.getElementById('cursor');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+// Audio control
+const audio = document.getElementById('bgAudio');
+const audioToggle = document.getElementById('audioToggle');
+const audioIcon = document.getElementById('audioIcon');
+let isMuted = false;
+
+audio.volume = 0.5;
+audio.muted = false;
+
+// Try to autoplay
+audio.play().then(() => {
+    // Autoplay successful
+    isMuted = false;
+}).catch(() => {
+    // Autoplay blocked, mute and wait for user interaction
+    audio.muted = true;
+    isMuted = true;
+    audioIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+});
+
+audioToggle.addEventListener('click', () => {
+    if (isMuted) {
+        audio.play();
+        audio.muted = false;
+        isMuted = false;
+        audioIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    } else {
+        audio.pause();
+        audio.muted = true;
+        isMuted = true;
+        audioIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+    }
+});
+        // Hover effects
+        document.querySelectorAll('.skill-node, .audio-toggle').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Copy to clipboard
+        function copyText(text, event) {
+            event.preventDefault();
+            navigator.clipboard.writeText(text).then(() => {
+                const notification = document.getElementById('notification');
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
